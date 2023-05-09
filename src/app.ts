@@ -1,5 +1,6 @@
 import express from "express";
 import { config } from "./config";
+import { connectDb } from "./database";
 
 const app = express();
 
@@ -9,6 +10,8 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-app.listen(app.get("port"), () => {
-  console.log(`Server started on http://localhost:${app.get("port")}`);
-});
+connectDb().then(() =>
+  app.listen(app.get("port"), () => {
+    console.log(`Server started on http://localhost:${app.get("port")}`);
+  })
+);
