@@ -20,12 +20,16 @@ WORKDIR /app
 COPY package.json package.json
 RUN yarn install --omit=dev --frozen-lockfile
 
+FROM node:19-alpine3.15 as seed
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+CMD ["node", "dist/data/seed.js"]
+
 FROM node:19-alpine3.15 as prod
 WORKDIR /app
 ENV PORT 8000
-ENV MONGODB_URI "mongodb+srv://juansebasbravo:Q6tfRGibSszvi8zj@cluster-juan.cxv9tji.mongodb.net/booksDB"
+EXPOSE ${PORT}
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-EXPOSE 8000
-
 CMD [ "node","dist/app.js" ]

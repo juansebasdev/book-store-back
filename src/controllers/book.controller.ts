@@ -34,7 +34,7 @@ const getBookById = async (req: Request, res: Response) => {
   try {
     const response = await dynamoClient.scan(params).promise();
     if (response.Items && response.Items.length > 0) {
-      const book = response.Items;
+      const book = response.Items[0];
       return res.status(200).json(book);
     } else {
       return res.status(404).json({ message: "Not Found" }); 
